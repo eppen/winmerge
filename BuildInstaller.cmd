@@ -37,9 +37,15 @@ if "%PLATFORM%" == "ARM64" (
 ) else (
   echo.
   echo ============================================================
-  echo Build WinMerge%PLATFORM%.iss with Inno Setup 5
+  echo Build WinMerge%PLATFORM% with Inno Setup
   echo ============================================================
-  for %%i in ("%ProgramFiles(x86)%" "%ProgramFiles%") do (
+  for %%i in ("%LOCALAPPDATA%\Programs" "%ProgramFiles(x86)%" "%ProgramFiles%") do (
+    if exist "Installer\innosetup\WinMerge%PLATFORM%.is6.iss" (
+      if exist "%%~i\Inno Setup 6\iscc.exe" (
+        "%%~i\Inno Setup 6\iscc.exe" /DTranslationsDir=..\..\Build\Translations "Installer\innosetup\WinMerge%PLATFORM%.is6.iss" || pause
+        goto :eof
+      )
+    )
     if exist "%%~i\Inno Setup 5\iscc.exe" (
       "%%~i\Inno Setup 5\iscc.exe" /DTranslationsDir=..\..\Build\Translations "Installer\innosetup\WinMerge%PLATFORM%.iss" || pause
       goto :eof
