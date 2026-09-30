@@ -1,0 +1,40 @@
+name: Package x64
+
+on:
+  push:
+    branches: [ build/package-x64 ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Configure Git for long paths
+      run: git config --global core.longpaths true
+
+    - uses: actions/checkout@v6
+      with:
+        submodules: 'recursive'
+
+    - name: Cache
+      uses: actions/cache@v5
+      with:
+        path: Build/WinMergeDownloadDeps
+        key: WinMergeDownloadDeps
+
+    - name: Build
+      run: |
+        .\DownloadDeps.cmd
+        .\BuildAll.cmd x64 -ci
+
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: WinMerge-x64.zip
+        path: Build/Releases/*.zip
+
+    - name: Upload installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: WinMerge-x64-Setup-x64.exe
+        path: Build/Releases/*.exe
